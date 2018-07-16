@@ -1,0 +1,20 @@
+body {
+    background-image: url(../images/background.jpg);
+    background-position: 50% 25%;
+    min-height: 100%;
+
+}
+
+.title-img {
+    max-width: 300px;
+
+}
+
+.container {
+    padding: 40px;
+    margin-top: 40px;
+    border-style: solid;
+    border-width: 3px;
+    border-style: ridge;
+    border-color: rgb(255, 187, 0);
+}

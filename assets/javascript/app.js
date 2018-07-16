@@ -1,28 +1,61 @@
 $(document).ready(function () {
     var questions = [
         {
-            question: "This is question 0.",
-            correctAnswer: "Correct answer",
-            incorrectAnswers: ["incorrect answer 0", "incorrect answer 1", "incorrect answer 2"],
+            question: "What is the name of the star ship that Farscape takes place on?",
+            correctAnswer: "Moya",
+            incorrectAnswers: ["Talyn", "Rygel", "Serenity"],
             answerImage: "assets/images/answer-image00.jpg"
         },
         {
-            question: "This is question 1.",
-            correctAnswer: "Correct answer",
-            incorrectAnswers: ["incorrect answer 0", "incorrect answer 1", "incorrect answer 2"],
+            question: "How did John Crichton leave Earth in the first episode?",
+            correctAnswer: "A Wormhole",
+            incorrectAnswers: ["Abducted", "Time Travel", "A Stargate"],
             answerImage: "assets/images/answer-image01.jpg"
         },
         {
-            question: "This is question 2.",
-            correctAnswer: "Correct answer",
-            incorrectAnswers: ["incorrect answer 0", "incorrect answer 1", "incorrect answer 2"],
+            question: "What is John Crichton's rank?",
+            correctAnswer: "Commander",
+            incorrectAnswers: ["Captain", "Lieutenant", "Sergeant"],
             answerImage: "assets/images/answer-image02.jpg"
+        },
+        {
+            question: "What two characters did Lani Tupu play in the series?",
+            correctAnswer: "Crais and Pilot",
+            incorrectAnswers: ["Crais and Scorpius", "Scorpius and Talyn", "D'Argo and Rygel"],
+            answerImage: "assets/images/answer-image03.jpg"
+        },
+        {
+            question: "What character is classified as a plant?",
+            correctAnswer: "Zhaan",
+            incorrectAnswers: ["Aeryn", "Chiana", "Jool"],
+            answerImage: "assets/images/answer-image04.jpg"
+        },
+        {
+            question: "What is Rygel's full title?",
+            correctAnswer: "Dominar Rygel XVI",
+            incorrectAnswers: ["Commander Rygel", "Dominar Rygel XXIII", "Commander Rygel VIII"],
+            answerImage: "assets/images/answer-image05.jpg"
         }
     ];
     var scoreCounter = 0;
     var totalScore = questions.length - 1;
     // q is the counter for the questions array
     var q = 0;
+    var timeLeft = 15;
+    var timerDiv = document.getElementById('timer-div');
+    // a microt is roughly a second and a third
+    var timerId = setInterval(countdown, 1333);
+
+    // =====COUNTDOWN TIMER=====
+    function countdown() {
+        if (timeLeft == 0) {
+            clearTimeout(timerId);
+            nextQuestion();
+        } else {
+            timerDiv.innerHTML = timeLeft + ' microts remaining.';
+            timeLeft--;
+        }
+    }
 
     //=====ARRAY RANDOMIZER======
     function randomize(array) {
@@ -54,6 +87,8 @@ $(document).ready(function () {
 
     // =====GAME START=====
     function nextQuestion() {
+        timeLeft = 15;
+        countdown();
         console.log("Question number " + q);
         var answerArray = questions[q].incorrectAnswers.concat(questions[q].correctAnswer);
         console.log(answerArray);
@@ -118,7 +153,12 @@ $(document).ready(function () {
         $("#game-body").empty();
         $("#game-body").append("<h4>Game Over!</h4>");
         $("#game-body").append("<h5>Your Final Score is " + scoreCounter + "/" + parseInt(totalScore + 1) + "!");
-
+        if (scoreCounter == 0) {
+            $("#game-body").append("<h6>Oh, yotz. You didn't get any of them.</h6>");
+        }
+        if (scoreCounter == parseInt(totalScore + 1)) {
+            $("#game-body").append("<h6>You got them all! You're the draddest!</h6>")
+        }
         var btn = document.createElement("button");
         btn.addEventListener('click', startScreen, false);
         btn.classList.add("btn", "btn-secondary", "m-1");
