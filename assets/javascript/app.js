@@ -20,7 +20,7 @@ $(document).ready(function () {
         }
     ];
     var scoreCounter = 0;
-    var totalScore = questions.length;
+    var totalScore = questions.length - 1;
     // q is the counter for the questions array
     var q = 0;
 
@@ -39,8 +39,16 @@ $(document).ready(function () {
     function startScreen() {
         console.log("New Game!");
         $("#game-body").empty();
-        startScreen = "<h4>This is my trivia game.</h4><button type='button' class='btn btn-secondary start-button'>Start Game!</button>";
-        $("#game-body").html(startScreen);
+        $("#game-body").html("<h4>This is my trivia game.</h4>");
+
+        // This bit of code let's me make dynamic buttons that have functionality
+        // an hour and a half later of mashing the "next question" button with no result
+        var btn = document.createElement("button");
+        btn.addEventListener('click', newGame, false);
+        btn.classList.add("btn", "btn-secondary", "m-1");
+        btn.innerHTML = "Start Game!";
+        btn.type = "button";
+        document.getElementById("game-body").appendChild(btn);
     }
     startScreen();
 
@@ -57,25 +65,68 @@ $(document).ready(function () {
         questionScreen = "<h4>" + questions[q].question + "</h4>";
         $("#game-body").html(questionScreen);
         // Add answer buttons
-        for (var i = 0; i < answerArray.length; i++){
-            $("#game-body").append("<button type='button' class='btn btn-outline-secondary m-1'>" + answerArray[i] + "</button>");
+        for (var i = 0; i < answerArray.length; i++) {
+            if (answerArray[i] == questions[q].correctAnswer) {
+                // Correct answer has "correct-answer" class
+                $("#game-body").append("<button type='button' class='correct-answer btn btn-outline-secondary m-1'>" + answerArray[i] + "</button>");
+            }
+            else {
+                $("#game-body").append("<button type='button' class='btn btn-outline-secondary m-1'>" + answerArray[i] + "</button>");
+            }
         }
         // Add next question button
-        $("#game-body").append("<br><button type='button' class='btn btn-secondary next-button m-1'>Next Question!</button>");
+        var btn = document.createElement("button");
+        btn.addEventListener('click', nextButton, false);
+        btn.classList.add("btn", "btn-secondary", "next-button", "m-1");
+        btn.innerHTML = "Next Question!";
+        btn.type = "button";
+        $("#game-body").append("<br>");
+        // jQuery does't like appending vars
+        document.getElementById("game-body").appendChild(btn);
     }
 
-    // =====NEXT QUESTION BUTTON PRESS=====
-    $(".next-button").on("click", function () {
-        console.log("Next question button pressed")
-        q++;
-        nextQuestion();
-    });
-
-    // =====NEW GAME BUTTON PRESS=====
-    $(".start-button").on("click", function () {
+    // =====NEW GAME=====
+    function newGame() {
         console.log("Start button pressed");
+        q = 0;
+        scoreCounter = 0;
         nextQuestion();
-    });
+    }
+
+    // =====NEXT BUTTON FUNCTION=====
+    function nextButton() {
+        // var x = document.getElementsByClassName("correct-answer");
+        if (document.getElementsByClassName("correct-answer").selected == true) {
+            scoreCounter++;
+        }
+
+        console.log("Current score is " + scoreCounter);
+
+        if (q == totalScore) {
+            endGame();
+        }
+        else {
+            console.log("Next question button pressed")
+            q++;
+            nextQuestion();
+        }
+    }
+
+    // =====END GAME=====
+    function endGame() {
+        console.log("Game Over!");
+        $("#game-body").empty();
+        $("#game-body").append("<h4>Game Over!</h4>");
+        $("#game-body").append("<h5>Your Final Score is " + scoreCounter + "/" + parseInt(totalScore + 1) + "!");
+
+        var btn = document.createElement("button");
+        btn.addEventListener('click', startScreen, false);
+        btn.classList.add("btn", "btn-secondary", "m-1");
+        btn.innerHTML = "New Game!";
+        btn.type = "button";
+        document.getElementById("game-body").appendChild(btn);
+    }
 });
 
-// Need to add correct answer checker and timer, next button might by unessisary
+// Look into changing the event listeners into targetting the classes correct-answer and incorrect-answer
+// Add timer to each nextQuestion(); with an end timer result of incorrect answer function, later make "time up" page
