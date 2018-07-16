@@ -41,20 +41,35 @@ $(document).ready(function () {
     var totalScore = questions.length - 1;
     // q is the counter for the questions array
     var q = 0;
+    var intervalId;
     var timeLeft = 15;
     var timerDiv = document.getElementById('timer-div');
-    // a microt is roughly a second and a third
-    var timerId = setInterval(countdown, 1333);
+    var timerId;
 
     // =====COUNTDOWN TIMER=====
     function countdown() {
         if (timeLeft == 0) {
             clearTimeout(timerId);
-            nextQuestion();
+            timeRanOut();
         } else {
             timerDiv.innerHTML = timeLeft + ' microts remaining.';
             timeLeft--;
         }
+    }
+
+    // =====TIME RAN OUT PAGE=====
+    function timeRanOut() {
+        $("#timer-div").empty();
+        $("#game-body").empty();
+        $("#game-body").append("<h4>You fekkik, you ran out of time!</h4>");
+        var btn = document.createElement("button");
+        btn.addEventListener('click', nextButton, false);
+        btn.classList.add("btn", "btn-secondary", "next-button", "m-1");
+        btn.innerHTML = "Next Question!";
+        btn.type = "button";
+        $("#game-body").append("<br>");
+        document.getElementById("game-body").appendChild(btn);
+
     }
 
     //=====ARRAY RANDOMIZER======
@@ -72,7 +87,7 @@ $(document).ready(function () {
     function startScreen() {
         console.log("New Game!");
         $("#game-body").empty();
-        $("#game-body").html("<h4>This is my trivia game.</h4>");
+        $("#game-body").html("<h4>How much do you know about the Sci-Fi cult classic?</h4>");
 
         // This bit of code let's me make dynamic buttons that have functionality
         // an hour and a half later of mashing the "next question" button with no result
@@ -85,10 +100,12 @@ $(document).ready(function () {
     }
     startScreen();
 
-    // =====GAME START=====
+    // =====NEXT QUESTION=====
     function nextQuestion() {
         timeLeft = 15;
+        clearInterval(intervalId);
         countdown();
+        intervalId = setInterval(countdown, 1333);
         console.log("Question number " + q);
         var answerArray = questions[q].incorrectAnswers.concat(questions[q].correctAnswer);
         console.log(answerArray);
@@ -106,7 +123,8 @@ $(document).ready(function () {
                 $("#game-body").append("<button type='button' class='correct-answer btn btn-outline-secondary m-1'>" + answerArray[i] + "</button>");
             }
             else {
-                $("#game-body").append("<button type='button' class='btn btn-outline-secondary m-1'>" + answerArray[i] + "</button>");
+                // Incorrect answers have "incorrect-answer" class
+                $("#game-body").append("<button type='button' class='incorrect-answer btn btn-outline-secondary m-1'>" + answerArray[i] + "</button>");
             }
         }
         // Add next question button
@@ -130,10 +148,10 @@ $(document).ready(function () {
 
     // =====NEXT BUTTON FUNCTION=====
     function nextButton() {
-        // var x = document.getElementsByClassName("correct-answer");
-        if (document.getElementsByClassName("correct-answer").selected == true) {
-            scoreCounter++;
-        }
+        // I still don't know how to check for the correct answer
+        // if ( ) {
+        //     scoreCounter++;
+        // }
 
         console.log("Current score is " + scoreCounter);
 
@@ -150,6 +168,7 @@ $(document).ready(function () {
     // =====END GAME=====
     function endGame() {
         console.log("Game Over!");
+        $("#timer-div").empty();
         $("#game-body").empty();
         $("#game-body").append("<h4>Game Over!</h4>");
         $("#game-body").append("<h5>Your Final Score is " + scoreCounter + "/" + parseInt(totalScore + 1) + "!");
@@ -169,4 +188,4 @@ $(document).ready(function () {
 });
 
 // Look into changing the event listeners into targetting the classes correct-answer and incorrect-answer
-// Add timer to each nextQuestion(); with an end timer result of incorrect answer function, later make "time up" page
+// Need to make correct and incorrect answer pages once I fond a way of determining a correct answer
