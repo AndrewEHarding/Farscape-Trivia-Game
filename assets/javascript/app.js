@@ -189,3 +189,4 @@ $(document).ready(function () {
 
 // Look into changing the event listeners into targetting the classes correct-answer and incorrect-answer
 // Need to make correct and incorrect answer pages once I fond a way of determining a correct answer
+// $(document).on("click", ".class", function); instead of ugly block of event listener code
