@@ -1,3 +1,4 @@
+// I love waiting to see how things go South.
 $(document).ready(function () {
     var questions = [
         {
@@ -37,6 +38,7 @@ $(document).ready(function () {
             answerImage: "assets/images/answer-image05.jpg"
         }
     ];
+    var chsCrctAnswr;
     var scoreCounter = 0;
     var totalScore = questions.length - 1;
     // q is the counter for the questions array
@@ -53,6 +55,7 @@ $(document).ready(function () {
             timeRanOut();
         } else {
             timerDiv.innerHTML = timeLeft + ' microts remaining.';
+            // A microt is the made up name for seconds in Farscape, this is a funny joke
             timeLeft--;
         }
     }
@@ -99,9 +102,16 @@ $(document).ready(function () {
         document.getElementById("game-body").appendChild(btn);
     }
     startScreen();
+    $(document).on("click", ".correct-answer", setChosenAnswer);
+
+    // =====SET CORRECT ANSWER=====
+    function setChosenAnswer() {
+        chsCrctAnswr = true;
+    }
 
     // =====NEXT QUESTION=====
     function nextQuestion() {
+        chsCrctAnswr = false;
         timeLeft = 15;
         clearInterval(intervalId);
         countdown();
@@ -149,9 +159,10 @@ $(document).ready(function () {
     // =====NEXT BUTTON FUNCTION=====
     function nextButton() {
         // I still don't know how to check for the correct answer
-        // if ( ) {
-        //     scoreCounter++;
-        // }
+        if (chsCrctAnswr == true) {
+            console.log("Correct Answer!");
+            scoreCounter++;
+        }
 
         console.log("Current score is " + scoreCounter);
 
@@ -168,6 +179,7 @@ $(document).ready(function () {
     // =====END GAME=====
     function endGame() {
         console.log("Game Over!");
+        clearInterval(intervalId);
         $("#timer-div").empty();
         $("#game-body").empty();
         $("#game-body").append("<h4>Game Over!</h4>");
