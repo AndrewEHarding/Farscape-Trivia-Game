@@ -38,14 +38,14 @@ $(document).ready(function () {
             answerImage: "assets/images/answer-image05.jpg"
         }
     ];
-    var chsCrctAnswr;
+    var timerDiv = $("#timer-div");
+    var gameBody = $("#game-body");
     var scoreCounter = 0;
     var totalScore = questions.length - 1;
-    // q is the counter for the questions array
     var q = 0;
-    var intervalId;
     var timeLeft = 15;
-    var timerDiv = document.getElementById('timer-div');
+    var chsCrctAnswr;
+    var intervalId;
     var timerId;
 
     // =====COUNTDOWN TIMER=====
@@ -54,25 +54,41 @@ $(document).ready(function () {
             clearTimeout(timerId);
             timeRanOut();
         } else {
-            timerDiv.innerHTML = timeLeft + ' microts remaining.';
-            // A microt is the made up name for seconds in Farscape, this is a funny joke
+            timerDiv.text(timeLeft + ' microts remaining.');
             timeLeft--;
         }
     }
 
     // =====TIME RAN OUT PAGE=====
     function timeRanOut() {
-        $("#timer-div").empty();
-        $("#game-body").empty();
-        $("#game-body").append("<h4>You fekkik, you ran out of time!</h4>");
-        var btn = document.createElement("button");
-        btn.addEventListener('click', nextButton, false);
-        btn.classList.add("btn", "btn-secondary", "next-button", "m-1");
-        btn.innerHTML = "Next Question!";
-        btn.type = "button";
-        $("#game-body").append("<br>");
-        document.getElementById("game-body").appendChild(btn);
+        timerDiv.empty();
+        gameBody.empty();
+        gameBody.append("<h4>You fekkik, you ran out of time!</h4>");
+        var btn = $("<button>");
+        btn.addClass("btn btn-secondary next-button");
+        btn.text("Next Question!");
+        gameBody.append("<br>");
+        gameBody.append(btn);
+    }
 
+    // =====ANSWER ASSESSMENT=====
+    function postQuestion() {
+        timerDiv.empty();
+        gameBody.empty();
+        clearInterval(intervalId);
+        if (chsCrctAnswr == true) {
+            gameBody.append("<h4>You Got it!</h4>");
+            gameBody.append("<h4>" + questions[q].correctAnswer + "</h4>");
+            gameBody.append("<img id='answer-img' src='" + questions[q].answerImage + "'>");
+        }
+        else {
+            gameBody.append("<h4>Sorry, incorrect.</h4>");
+        }
+        var btn = $("<button>");
+        btn.addClass("btn btn-secondary next-button");
+        btn.text("Next Question!");
+        gameBody.append("<br>");
+        gameBody.append(btn);
     }
 
     //=====ARRAY RANDOMIZER======
@@ -88,25 +104,12 @@ $(document).ready(function () {
 
     // =====START SCREEN=====
     function startScreen() {
-        console.log("New Game!");
-        $("#game-body").empty();
-        $("#game-body").html("<h4>How much do you know about the Sci-Fi cult classic?</h4>");
-
-        // This bit of code let's me make dynamic buttons that have functionality
-        // an hour and a half later of mashing the "next question" button with no result
-        var btn = document.createElement("button");
-        btn.addEventListener('click', newGame, false);
-        btn.classList.add("btn", "btn-secondary", "m-1");
-        btn.innerHTML = "Start Game!";
-        btn.type = "button";
-        document.getElementById("game-body").appendChild(btn);
-    }
-    startScreen();
-    $(document).on("click", ".correct-answer", setChosenAnswer);
-
-    // =====SET CORRECT ANSWER=====
-    function setChosenAnswer() {
-        chsCrctAnswr = true;
+        gameBody.empty();
+        gameBody.html("<h4>How much do you know about the Sci-Fi cult classic?</h4>");
+        var btn = $("<button>");
+        btn.addClass("btn btn-secondary start-button");
+        btn.text("Start Game!");
+        gameBody.append(btn);
     }
 
     // =====NEXT QUESTION=====
@@ -116,41 +119,34 @@ $(document).ready(function () {
         clearInterval(intervalId);
         countdown();
         intervalId = setInterval(countdown, 1333);
-        console.log("Question number " + q);
         var answerArray = questions[q].incorrectAnswers.concat(questions[q].correctAnswer);
-        console.log(answerArray);
         randomize(answerArray);
-        // Answers are now randomized
-        console.log(answerArray);
-        $("#game-body").empty();
-        // Add question
+        gameBody.empty();
         questionScreen = "<h4>" + questions[q].question + "</h4>";
-        $("#game-body").html(questionScreen);
-        // Add answer buttons
+        gameBody.html(questionScreen);
         for (var i = 0; i < answerArray.length; i++) {
             if (answerArray[i] == questions[q].correctAnswer) {
-                // Correct answer has "correct-answer" class
-                $("#game-body").append("<button type='button' class='correct-answer btn btn-outline-secondary m-1'>" + answerArray[i] + "</button>");
+                var answr = $("<button>");
+                answr.addClass("correct-answer btn btn-outline-secondary mx-1 mb-2");
+                answr.text(answerArray[i]);
+                gameBody.append(answr);
             }
             else {
-                // Incorrect answers have "incorrect-answer" class
-                $("#game-body").append("<button type='button' class='incorrect-answer btn btn-outline-secondary m-1'>" + answerArray[i] + "</button>");
+                var answr = $("<button>");
+                answr.addClass("incorrect-answer btn btn-outline-secondary mx-1 mb-2");
+                answr.text(answerArray[i]);
+                gameBody.append(answr);
             }
         }
-        // Add next question button
-        var btn = document.createElement("button");
-        btn.addEventListener('click', nextButton, false);
-        btn.classList.add("btn", "btn-secondary", "next-button", "m-1");
-        btn.innerHTML = "Next Question!";
-        btn.type = "button";
-        $("#game-body").append("<br>");
-        // jQuery does't like appending vars
-        document.getElementById("game-body").appendChild(btn);
+        var btn = $("<button>");
+        btn.addClass("btn btn-secondary post-question");
+        btn.text("Next Question");
+        gameBody.append("<br>");
+        gameBody.append(btn);
     }
 
     // =====NEW GAME=====
     function newGame() {
-        console.log("Start button pressed");
         q = 0;
         scoreCounter = 0;
         nextQuestion();
@@ -158,19 +154,14 @@ $(document).ready(function () {
 
     // =====NEXT BUTTON FUNCTION=====
     function nextButton() {
-        // I still don't know how to check for the correct answer
         if (chsCrctAnswr == true) {
-            console.log("Correct Answer!");
             scoreCounter++;
         }
-
-        console.log("Current score is " + scoreCounter);
 
         if (q == totalScore) {
             endGame();
         }
         else {
-            console.log("Next question button pressed")
             q++;
             nextQuestion();
         }
@@ -178,27 +169,32 @@ $(document).ready(function () {
 
     // =====END GAME=====
     function endGame() {
-        console.log("Game Over!");
         clearInterval(intervalId);
-        $("#timer-div").empty();
-        $("#game-body").empty();
-        $("#game-body").append("<h4>Game Over!</h4>");
-        $("#game-body").append("<h5>Your Final Score is " + scoreCounter + "/" + parseInt(totalScore + 1) + "!");
+        timerDiv.empty();
+        gameBody.empty();
+        gameBody.append("<h4>Game Over!</h4>");
+        gameBody.append("<h5>Your Final Score is " + scoreCounter + "/" + parseInt(totalScore + 1) + "!");
         if (scoreCounter == 0) {
-            $("#game-body").append("<h6>Oh, yotz. You didn't get any of them.</h6>");
+            gameBody.append("<h6>Oh, yotz. You didn't get any of them.</h6>");
         }
         if (scoreCounter == parseInt(totalScore + 1)) {
-            $("#game-body").append("<h6>You got them all! You're the draddest!</h6>")
+            gameBody.append("<h6>You got them all! You're the draddest!</h6>")
         }
-        var btn = document.createElement("button");
-        btn.addEventListener('click', startScreen, false);
-        btn.classList.add("btn", "btn-secondary", "m-1");
-        btn.innerHTML = "New Game!";
-        btn.type = "button";
-        document.getElementById("game-body").appendChild(btn);
+        var btn = $("<button>");
+        btn.addClass("btn btn-secondary restart-button");
+        btn.text("Restart!");
+        gameBody.append(btn);
     }
-});
 
-// Look into changing the event listeners into targetting the classes correct-answer and incorrect-answer
-// Need to make correct and incorrect answer pages once I fond a way of determining a correct answer
-// $(document).on("click", ".class", function); instead of ugly block of event listener code
+    startScreen();
+    $(document).on("click", ".correct-answer", function () {
+        chsCrctAnswr = true;
+    });
+    $(document).on("click", ".incorrect-answer", function () {
+        chsCrctAnswr = false;
+    });
+    $(document).on("click", ".start-button", newGame);
+    $(document).on("click", ".next-button", nextButton);
+    $(document).on("click", ".restart-button", startScreen);
+    $(document).on("click", ".post-question", postQuestion);
+});
