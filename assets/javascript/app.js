@@ -66,7 +66,7 @@ $(document).ready(function () {
         gameBody.append("<h4>You fekkik, you ran out of time!</h4>");
         var btn = $("<button>");
         btn.addClass("btn btn-secondary next-button");
-        btn.text("Next Question!");
+        btn.text("Next");
         gameBody.append("<br>");
         gameBody.append(btn);
     }
@@ -86,7 +86,7 @@ $(document).ready(function () {
         }
         var btn = $("<button>");
         btn.addClass("btn btn-secondary next-button");
-        btn.text("Next Question!");
+        btn.text("Next");
         gameBody.append("<br>");
         gameBody.append(btn);
     }
@@ -140,7 +140,7 @@ $(document).ready(function () {
         }
         var btn = $("<button>");
         btn.addClass("btn btn-secondary post-question");
-        btn.text("Next Question");
+        btn.text("Next");
         gameBody.append("<br>");
         gameBody.append(btn);
     }
